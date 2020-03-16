@@ -8,10 +8,13 @@ ControlIO control;
 ControlDevice stick;
 ControlHat hat;
 
-PImage bg;
+PImage bg, compass;
 PShape base, top, motor, propeller;
+PFont font8, font9, font12, font15, font30, font50;
 
 color WHITE = color(255, 255, 255), BLACK = color(0, 0, 0);
+
+HashMap<String, Float> telloData = new HashMap<String, Float>(17);
 
 int pX, pY, pZ;
 int yaw;
@@ -41,6 +44,7 @@ void setup(){
   }
     
   bg = loadImage("bg.png");
+  compass = loadImage("compass.png");
   
   base = loadShape("cad/base.obj");
   top = loadShape("cad/top.obj");
@@ -58,11 +62,15 @@ void setup(){
   udp.setReceiveHandler("receiveFromTello");
 
   sendCommand("command"); // Initialize Tello's SDK mode [Remark 2]
+  initializeTelloData();
+  initializeFont();
 }
 
 void draw(){
   background(bg);
-  drawTello();
+  drawTello(int(telloData.get("roll")), int(telloData.get("pitch")), int(telloData.get("yaw")));
+  drawGUI();  
+ 
   if(mode == JOYSTICK){
     pX = int(map(stick.getSlider("X").getValue(), -1, 1, -100, 100));     // Position X
     pY = int(map(stick.getSlider("Y").getValue(), -1, 1, 100, -100));     // Position Y
@@ -122,4 +130,9 @@ void receiveFromTello( byte[] data ) {
     received+=char(data[i]);
   }
   //println(received);
+  String[] allData = split(received, ';');
+  for (int i = 0; i < allData.length - 1; i++) {
+    String[] singleData = split(allData[i], ':');
+    telloData.put(singleData[0], float(singleData[1]));
+  }
 }

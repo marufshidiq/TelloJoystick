@@ -1,4 +1,4 @@
-void drawTello()
+void drawTello(int roll, int pitch, int yaw)
 {  
   pushMatrix(); // Start Stack #1
   smooth();
@@ -14,9 +14,9 @@ void drawTello()
   // Draw Tello Base body
   translate(0, 0, 0);
   fill(BLACK);
-  rotateX(radians(90));
-  rotateY(radians(-90));
-  rotateZ(radians(90));
+  rotateX(radians(pitch));
+  rotateY(radians(-roll));
+  rotateZ(radians(yaw));
   shape(base);
 
   // Draw Tello Top body
