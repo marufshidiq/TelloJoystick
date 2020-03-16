@@ -8,6 +8,11 @@ ControlIO control;
 ControlDevice stick;
 ControlHat hat;
 
+PImage bg;
+PShape base, top, motor, propeller;
+
+color WHITE = color(255, 255, 255), BLACK = color(0, 0, 0);
+
 int pX, pY, pZ;
 int yaw;
 
@@ -20,6 +25,7 @@ int last_pX, last_pY, last_pZ;
 int last_yaw;
 
 void setup(){
+  size(800, 600, P3D);
   control = ControlIO.getInstance(this);
   stick = control.filter(GCP.STICK).getMatchedDevice("tello-v1");
   if (stick == null) {
@@ -33,15 +39,30 @@ void setup(){
     stick.getButton("BASE2").plug(this, "takeOff", ControlIO.ON_PRESS);
     stick.getButton("BASE").plug(this, "landing", ControlIO.ON_PRESS);
   }
+    
+  bg = loadImage("bg.png");
+  
+  base = loadShape("cad/base.obj");
+  top = loadShape("cad/top.obj");
+  motor = loadShape("cad/motor.obj");
+  propeller = loadShape("cad/propeller.obj");
+
+  base.disableStyle();
+  top.disableStyle();
+  motor.disableStyle();
+  propeller.disableStyle();
 
   udp = new UDP(this, 8890);
   udp.listen(true);
+  //udp.log(true);
   udp.setReceiveHandler("receiveFromTello");
 
   sendCommand("command"); // Initialize Tello's SDK mode [Remark 2]
 }
 
 void draw(){
+  background(bg);
+  drawTello();
   if(mode == JOYSTICK){
     pX = int(map(stick.getSlider("X").getValue(), -1, 1, -100, 100));     // Position X
     pY = int(map(stick.getSlider("Y").getValue(), -1, 1, 100, -100));     // Position Y
