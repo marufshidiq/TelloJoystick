@@ -70,6 +70,7 @@ void draw(){
   background(bg);
   drawTello(int(telloData.get("roll")), int(telloData.get("pitch")), int(telloData.get("yaw")));
   drawGUI();  
+  drawLink();
  
   if(mode == JOYSTICK){
     pX = int(map(stick.getSlider("X").getValue(), -1, 1, -100, 100));     // Position X
