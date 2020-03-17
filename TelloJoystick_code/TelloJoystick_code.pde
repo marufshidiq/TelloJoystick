@@ -2,17 +2,19 @@ import org.gamecontrolplus.gui.*;
 import org.gamecontrolplus.*;
 import net.java.games.input.*;
 import hypermedia.net.*;
+import gohai.glvideo.*;
 
 UDP udp;
 ControlIO control;
 ControlDevice stick;
 ControlHat hat;
+GLVideo video;
 
 PImage bg, compass;
 PShape base, top, motor, propeller;
 PFont font8, font9, font12, font15, font30, font50;
 
-color WHITE = color(255, 255, 255), BLACK = color(0, 0, 0);
+color WHITE = color(255, 255, 255), BLACK = color(0, 0, 0), RED = color(255, 0, 0);
 
 HashMap<String, Float> telloData = new HashMap<String, Float>(17);
 
@@ -24,8 +26,14 @@ int KEYBOARD = 0;
 int JOYSTICK = 1;
 int mode; // 0 = Keyboard | 1 = Joystick
 
+// View Mode
+int VIEW_3D = 0;
+int VIEW_CAMERA = 1;
+int view_mode; // 0 = 3D | 1 = Camera
+
 int last_pX, last_pY, last_pZ;
 int last_yaw;
+int last_video_data = 0;
 
 void setup(){
   size(800, 600, P3D);
@@ -60,6 +68,9 @@ void setup(){
   udp.listen(true);
   //udp.log(true);
   udp.setReceiveHandler("receiveFromTello");
+  video = new GLVideo(this, "udpsrc port=11111 ! decodebin", GLVideo.NO_SYNC);
+  video.play();
+  frameRate(20);
 
   sendCommand("command"); // Initialize Tello's SDK mode [Remark 2]
   initializeTelloData();
@@ -68,7 +79,12 @@ void setup(){
 
 void draw(){
   background(bg);
-  drawTello(int(telloData.get("roll")), int(telloData.get("pitch")), int(telloData.get("yaw")));
+  if(view_mode == VIEW_3D){
+    drawTello(int(telloData.get("roll")), int(telloData.get("pitch")), int(telloData.get("yaw")));
+  }
+  else if(view_mode == VIEW_CAMERA){
+    drawCamera();
+  }
   drawGUI();  
   drawLink();
  

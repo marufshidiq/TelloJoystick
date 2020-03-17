@@ -3,6 +3,11 @@ void keyPressed(){
   // Takeoff and Landing
   if     (formatedKey == 'x'){ takeOff(); }
   else if(formatedKey == 'z'){ landing(); }
+  else if(formatedKey == 'v'){ sendCommand("streamon"); }
+  else if(formatedKey == 'b'){ sendCommand("streamoff"); }
+  
+  else if(formatedKey == '1'){ view_mode = VIEW_3D; }
+  else if(formatedKey == '2'){ view_mode = VIEW_CAMERA; }
 
   else if(formatedKey == 'w'){ sendCommand("forward 30"); }
   else if(formatedKey == 'a'){ sendCommand("left 30"); }

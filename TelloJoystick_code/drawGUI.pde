@@ -14,7 +14,7 @@ void initializeFont() {
     font8 = createFont("Ubuntu", 8, false);
     font9 = createFont("Ubuntu", 9, false);
     font12 = createFont("Ubuntu", 12, false);
-    font15 = createFont("Ubuntu", 15, false);
+    font15 = createFont("Ubuntu bold", 15, false);
     font30 = createFont("Ubuntu", 30, false);
     font50 = createFont("Ubuntu", 50, false);
   } else if (osType() == "win") {
@@ -36,6 +36,7 @@ void drawGUI() {
 }
 
 void drawBattery(int batt) {
+  noStroke();
   fill(23, 116, 186);
   textAlign(CENTER);
   textFont(font30);
